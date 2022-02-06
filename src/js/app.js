@@ -70,9 +70,26 @@ class App {
             this.renderer.render(this.scene, this.camera);
 
             const torus = this.find("torus");
+            const cube = this.find("cube");
+            const mars = this.find("mars");
+
             if (torus) {
                 torus.rotation.x += 0.01;
                 torus.rotation.y += 0.01;
+                torus.rotation.z += 0.01;
+            }
+
+            if(torus && cube && mars) {
+                const top = document.body.getBoundingClientRect().top;
+
+                mars.rotation.y += 0.01;
+
+                cube.rotation.y += 0.01;
+                cube.rotation.z += 0.01;
+
+                this.camera.position.x = top * -0.0002;
+                this.camera.position.y = top * -0.0002;
+                this.camera.position.z = top * -0.01;
             }
 
             this.controls.update();
@@ -84,10 +101,23 @@ class App {
 
     /**
      * initialize orbit controls
+     * @private
      * @return {void}
      */
     #createControls() {
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    }
+
+    /**
+     * initialize or add any event listeners
+     * @returns {void}
+     */
+    addEventListeners() {
+        
+
+        // onScroll();
+
+        // window.addEventListener("scroll", onScroll);
     }
 
     /**
@@ -184,6 +214,9 @@ class App {
         });
         const mesh = new THREE.Mesh(geometry, material);
 
+        mesh.position.z = 30;
+        mesh.position.x = -10;
+
         return mesh;
     }
 
@@ -229,7 +262,13 @@ app.add(
         name: "mars",
         mesh: app.createMars(),
     },
+    {
+        name: "cube",
+        mesh: app.createCube(),
+    },
 
     // add star field to the scene
     ...new Array(100).fill().map(() => ({ name: "star", mesh: app.createStar() }))
 );
+
+app.addEventListeners();
